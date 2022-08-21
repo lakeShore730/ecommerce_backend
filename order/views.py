@@ -82,7 +82,7 @@ class OrderViewSet(viewsets.ViewSet):
         order_list_serializer = OrderListSerializer(order)
         return Response(order_list_serializer.data)
 
-    # Applying permission classes based on per viewSet method
+    # Applying permission classes based on per viewSet method 
     def get_permissions(self):
         try:
             return [permission() for permission in self.permission_classes_by_action[self.action]]

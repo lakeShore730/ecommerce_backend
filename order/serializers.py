@@ -24,8 +24,9 @@ class ItemSerializerForOrder(serializers.ModelSerializer):
 class OrderCreationSerializer(serializers.ModelSerializer):
     items = ItemSerializerForOrder(many=True)
     class Meta:
-        model = Order
+        model = Order 
         fields = ['remarks', 'items']
+        extra_kwargs = {'remarks': {'error_messages': {"blank": "Remarks is required."}}}
 
 
 class OrderListSerializer(serializers.ModelSerializer):

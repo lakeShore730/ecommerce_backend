@@ -1,14 +1,17 @@
 from rest_framework import serializers
-from . models import User, RegisterUserOtp, ForgotPasswordOtp
-from . validators import validate_otp_number
+from .models import User, RegisterUserOtp, ForgotPasswordOtp
+from .validators import validate_otp_number
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(max_length=None, use_url=True, allow_null=False, required=True)
+
     class Meta:
         model = User
         fields = '__all__'
-        extra_kwargs = {'password': {'write_only': True}, 'email': {'error_messages': {"required": "Give yourself a username", "invalid":"Invalid"}}}
+        extra_kwargs = {'password': {'write_only': True}, 'email': {'error_messages': {"required": "Email is required.", "invalid":"Invalid email address."}}}
     
+   
     def create(self, validated_data):
         validated_data.pop('is_active', None)
         validated_data.pop('last_login', None)
@@ -17,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data.pop('updated_at', None)
         validated_data.pop('user_permissions', None)
         validated_data.pop('groups', None)
-
+ 
         user = User.objects.create(**validated_data)
         user.set_password(validated_data['password'])
         user.save()

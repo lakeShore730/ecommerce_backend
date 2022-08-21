@@ -12,7 +12,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
+ 
 class Product(models.Model):
     name = models.CharField(max_length=50)
     price = models.FloatField()
@@ -22,6 +22,7 @@ class Product(models.Model):
     category = models.ManyToManyField(Category)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     is_active =  models.BooleanField(default=True)
+    is_feature =  models.BooleanField(default=True)
     primary_image = models.ImageField(upload_to='product_image')
     secondary_image1 = models.ImageField(upload_to='product_image', blank=True, null=True)
     secondary_image2 = models.ImageField(upload_to='product_image', blank=True, null=True)

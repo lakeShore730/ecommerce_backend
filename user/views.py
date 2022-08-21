@@ -3,14 +3,14 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from . models import User, RegisterUserOtp, ForgotPasswordOtp
-from . serializers import UserSerializer, RegisterUserOtpSerializer, ForgotPasswordOtpSerializer, LoginSerializer, RegisterOtpSerializer, ForgotPasswordSerializer, ForgotPasswordOtpVerifyAndResetPasswordSerializer, ResetPasswordSerializer
-from . services import send_auth_mail, generate_otp
-from . permissions import UserAccessPermission
-from . pagination import CustomPagination
+from .models import User, RegisterUserOtp, ForgotPasswordOtp
+from .serializers import UserSerializer, RegisterUserOtpSerializer, ForgotPasswordOtpSerializer, LoginSerializer, RegisterOtpSerializer, ForgotPasswordSerializer, ForgotPasswordOtpVerifyAndResetPasswordSerializer, ResetPasswordSerializer
+from .services import send_auth_mail, generate_otp
+from .permissions import UserAccessPermission
+from .pagination import CustomPagination
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -27,18 +27,18 @@ class UserViewSet(viewsets.ViewSet):
         paginator = CustomPagination()
         queryset = User.objects.all()
         context = paginator.paginate_queryset(queryset, request)
-        serializer = UserSerializer(context, many=True)
+        serializer = UserSerializer(context, many=True, context={"request":request})
         return paginator.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk=None):
         queryset = User.objects.all()
         user = get_object_or_404(queryset, pk=pk)
         self.check_object_permissions(request, user) # Applying the object level permission checking
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(user, context={"request":request})
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data, context={"request":request})
         if serializer.is_valid():
             serializer.save()
             otp = generate_otp()
@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ViewSet):
             return Response({'message': 'Your account is not verified, verify it first.'}, status=status.HTTP_400_BAD_REQUEST)
             
         self.check_object_permissions(request, user)
-        serializer = UserSerializer(user, data=request.data, partial=True) # just because of some reason, this partial is used
+        serializer = UserSerializer(user, data=request.data, partial=True, context={"request":request}) # just because of some reason, this partial is used
 
         if serializer.is_valid():
             serializer.save()
@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ViewSet):
             return Response({'message': 'Your account is not verified, verify it first.'}, status=status.HTTP_400_BAD_REQUEST)
         
         self.check_object_permissions(request, user)
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True, context={"request":request})
 
         if serializer.is_valid():
             serializer.save()
@@ -106,13 +106,13 @@ class LoginViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         queryset = User.objects.all()
         user = get_object_or_404(queryset, email=serializer.data['email'])
-        user_serializer = UserSerializer(user)
+        user_serializer = UserSerializer(user, context={"request":request})
 
         if not user.is_active:
             return Response({'message': 'Your account is not verified, verify it first.'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not authenticate(username=serializer.data['email'], password=serializer.data['password']):
-            return Response({'message': 'Your password did not match with an entered email.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Your password did not match with your email.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
         token, created = Token.objects.get_or_create(user=user)        
@@ -120,14 +120,11 @@ class LoginViewSet(viewsets.ViewSet):
 
 
 class LogoutViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
     
     def create(self, request):
-        try:
-            request.user.auth_token.delete()
-        except (AttributeError, ObjectDoesNotExist):
-            pass
-
-        return Response({'success': 'Successfully logged out.'}, status=status.HTTP_200_OK)
+        request.user.auth_token.delete()
+        return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
 
 
 # View set for the registration OTP verification
@@ -146,7 +143,7 @@ class RegistrationOtpVerificationViewSet(viewsets.ViewSet):
         user.save()
         otp.delete()
         
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(user, context={"request":request})
         return Response(serializer.data)
         
 
@@ -189,7 +186,7 @@ class ForgotPasswordOtpVerificationAndResetPasswordViewSet(viewsets.ViewSet):
 
         user.set_password(opt_verification_serializer.data['password'])
 
-        user_serializer = UserSerializer(user)
+        user_serializer = UserSerializer(user, context={"request":request})
         return Response(user_serializer.data)
 
 
@@ -208,5 +205,5 @@ class ResetPasswordViewSet(viewsets.ViewSet):
 
         user.set_password(reset_password_serializer.data['new_password'])
         user.save()
-        user_serializer = UserSerializer(user)
+        user_serializer = UserSerializer(user, context={"request":request})
         return Response(user_serializer.data)

@@ -31,6 +31,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# CORS 
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000"
+]
+
 
 # Application definition
 
@@ -43,12 +48,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'user.apps.UserConfig',
     'product.apps.ProductConfig',
     'order.apps.OrderConfig',
+    'advertisement.apps.AdvertisementConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

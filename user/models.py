@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .managers import CustomUserManager
 from django.utils import timezone
-from . validators import validate_otp_number, validate_phone_number
+from .validators import validate_otp_number, validate_phone_number
 
 
 # Custom user model

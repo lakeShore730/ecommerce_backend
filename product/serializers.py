@@ -2,9 +2,15 @@ from rest_framework import serializers
 from . models import Category, Product
 
 class CategorySerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
     class Meta:
         model = Category
         fields = '__all__'
+
+    def get_image(self, obj):
+        if not obj.image: 
+            return None
+        return self.context['request'].build_absolute_uri( obj.image.url)
 
 
 class NestedCategorySerializer(serializers.ModelSerializer):
@@ -17,7 +23,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'discount', 'quantity', 'description',  'category', 'user', 'is_active', 'primary_image', 'secondary_image1', 'secondary_image2', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'price', 'discount', 'quantity', 'description',  'category', 'user', 'is_active', 'is_feature' 'primary_image', 'secondary_image1', 'secondary_image2', 'created_at', 'updated_at']
         extra_kwargs = {'user': {'read_only': True}}
 
     def create(self, validated_data):
@@ -41,15 +47,33 @@ class ProductSerializer(serializers.ModelSerializer):
         if not validated_data.get('category') == None:
             instance.category.set(validated_data.get('category', instance.category))
         
-        instance.save()
+        instance.save() 
         return instance
 
 
 class ProductListSerializer(serializers.ModelSerializer):
     category = NestedCategorySerializer(many=True)
+    # primary_image = serializers.ImageField(max_length=None, use_url=True, allow_null=False, required=True)
+    primary_image = serializers.SerializerMethodField()
+    secondary_image1 = serializers.SerializerMethodField()
+    secondary_image2 = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'discount', 'quantity', 'description',  'category', 'user', 'is_active', 'primary_image', 'secondary_image1', 'secondary_image2', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'price', 'discount', 'quantity', 'description',  'category', 'user', 'is_active', 'is_feature', 'primary_image', 'secondary_image1', 'secondary_image2', 'created_at', 'updated_at']
       
+    def get_primary_image(self, obj):
+        if not obj.primary_image: 
+            return None
+        return self.context['request'].build_absolute_uri( obj.primary_image.url)
     
+    def get_secondary_image1(self, obj):
+        if not obj.secondary_image1: 
+            return None
+        return self.context['request'].build_absolute_uri( obj.secondary_image1.url)
+
+    def get_secondary_image2(self, obj):
+        if not obj.secondary_image2: 
+            return None
+        return self.context['request'].build_absolute_uri( obj.secondary_image2.url)
