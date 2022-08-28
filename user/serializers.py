@@ -4,7 +4,7 @@ from .validators import validate_otp_number
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile_image = serializers.ImageField(max_length=None, use_url=True, allow_null=False, required=True)
+    profile_image = serializers.ImageField(max_length=None, use_url=True, allow_null=True, required=False)
 
     class Meta:
         model = User

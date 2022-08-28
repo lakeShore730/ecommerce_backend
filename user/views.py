@@ -85,7 +85,7 @@ class UserViewSet(viewsets.ViewSet):
     def destroy(self, request, pk=None):
         queryset = User.objects.all()
         user = get_object_or_404(queryset, pk=pk)
-        self.check_object_permissions(request, user)
+        self.check_object_permissions(request, user) 
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
