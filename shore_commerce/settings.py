@@ -27,12 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jb5*8$lu%f7qs#o@(nuxipg#a$z*#y5kbha&4qmn_um-+yx$7j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1","lakeshore-ecommere-backend.herokuapp.com", "lakeshore-ecommere.herokuapp.com", ]
 
 # CORS 
-CORS_ORIGIN_WHITELIST = [
+CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://lakeshore-ecommere.herokuapp.com',
 ]
