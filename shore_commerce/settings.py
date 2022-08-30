@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "lakeshore-ecommerce-backend.herokuapp.com" ]
 # CORS 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'http://lakeshore-ecommere.herokuapp.com',
+    'https://lakeshore-ecommerce-frontend.herokuapp.com',
 ]
 
 
