@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-jb5*8$lu%f7qs#o@(nuxipg#a$z*#y5kbha&4qmn_um-+yx$7j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1","lakeshore-ecommere-backend.herokuapp.com", "lakeshore-ecommere.herokuapp.com", ]
+ALLOWED_HOSTS = ["127.0.0.1", "lakeshore-ecommerce-backend.herokuapp.com" ]
 
 # CORS 
 CORS_ALLOWED_ORIGINS = [
