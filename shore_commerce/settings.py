@@ -27,13 +27,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jb5*8$lu%f7qs#o@(nuxipg#a$z*#y5kbha&4qmn_um-+yx$7j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1","lakeshore-ecommere-backend.herokuapp.com", "lakeshore-ecommere.herokuapp.com", ]
 
 # CORS 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000"
+    'http://localhost:3000',
+    'http://lakeshore-ecommere.herokuapp.com',
 ]
 
 
@@ -162,3 +163,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 EMAIL_USE_TLS = True
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'

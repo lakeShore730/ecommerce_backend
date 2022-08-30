@@ -1,0 +1,1 @@
+web: gunicorn shore_commerce.wsgi
